@@ -77,13 +77,6 @@ class CausalityAnalyzer:
             labels = self.list_labels()
         palette = self.get_palette(labels)
 
-        # Custom function to annotate correlation
-        def corrfunc(x, y, **kws):
-            r = pd.Series(x).corr(pd.Series(y))
-            ax = plt.gca()
-            ax.annotate(f"r = {r:.2f}", xy=(.5, .5), xycoords=ax.transAxes,
-                        ha='center', va='center', fontsize=12, fontweight='bold')
-
         g = sns.pairplot(
             combined,
             hue='label',
@@ -92,8 +85,8 @@ class CausalityAnalyzer:
             diag_kws={'common_norm': False},
             palette=palette
         )
-        # Add correlation to upper triangle, place in upper right
-        for i, j in zip(*np.triu_indices_from(g.axes, 1)):
+        # Add correlation to lower triangle, place in lower right
+        for i, j in zip(*np.tril_indices_from(g.axes, -1)):
             ax = g.axes[i, j]
             x_var = g.x_vars[j]
             y_var = g.y_vars[i]
@@ -101,8 +94,8 @@ class CausalityAnalyzer:
                 r = pd.Series(combined[x_var]).corr(pd.Series(combined[y_var]))
                 ax.annotate(
                     f"r = {r:.2f}",
-                    xy=(0.95, 0.85), xycoords='axes fraction',
-                    ha='right', va='top',
+                    xy=(0.95, 0.05), xycoords='axes fraction',
+                    ha='right', va='bottom',
                     fontsize=14, fontweight='bold',
                     bbox=dict(boxstyle="round,pad=0.2", fc="white", alpha=0.7, ec="none")
                 )
@@ -148,11 +141,12 @@ class CausalityAnalyzer:
 if __name__ == '__main__':
     # Example usage: adjust paths as needed
     analyzer = CausalityAnalyzer()
-    analyzer.add_data('without_intervention', 'data/data_1269.csv')
-    analyzer.add_data('with_intervention_A_0', 'data/data_1292.csv')
-    analyzer.add_data('with_intervention_D_-2', 'data/data_1342.csv')
-    analyzer.add_data('with_intervention_B_2', 'data/data_1346.csv')
-    analyzer.add_data('with_intervention_C_-2', 'data/data_1351.csv')
+    analyzer.add_data('without_intervention', 'data/data_1340.csv')
+    # analyzer.add_data('with_intervention_A_0', 'data/data_1292.csv')
+    # analyzer.add_data('with_intervention_D_-2', 'data/data_1342.csv')
+    # analyzer.add_data('with_intervention_B_2', 'data/data_1346.csv')
+    # analyzer.add_data('with_intervention_C_-2', 'data/data_1351.csv')
+    analyzer.add_data('with_intervention_H_-2', 'data/data_1392.csv')
     # Plot pairwise relationships
     analyzer.plot_pairplot()
     # Plot summary statistics
