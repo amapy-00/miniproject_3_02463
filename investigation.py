@@ -54,6 +54,13 @@ class CausalityAnalyzer:
         """Return current dataset labels."""
         return list(self.datasets.keys())
 
+    def get_palette(self, labels=None):
+        """Return a consistent color palette for the given labels."""
+        if labels is None:
+            labels = self.list_labels()
+        palette = sns.color_palette("tab10", n_colors=len(labels))
+        return dict(zip(labels, palette))
+
     def plot_pairplot(self, labels: list = None, kind='scatter'):
         """Plot a Seaborn pairplot for loaded datasets filtered by optional labels."""
         combined = self.combine_data()
@@ -65,12 +72,16 @@ class CausalityAnalyzer:
             if combined.empty:
                 print(f"No data matches labels {labels}.")
                 return
+        else:
+            labels = self.list_labels()
+        palette = self.get_palette(labels)
         sns.pairplot(
             combined,
             hue='label',
             kind=kind,
             diag_kind='kde',
-            diag_kws={'common_norm': False}
+            diag_kws={'common_norm': False},
+            palette=palette
         )
         plt.tight_layout()
         plt.show(block=False)
@@ -86,6 +97,9 @@ class CausalityAnalyzer:
             if stats.empty:
                 print(f"No statistics matches labels {labels}.")
                 return
+        else:
+            labels = self.list_labels()
+        palette = self.get_palette(labels)
         metrics = ['mean', 'variance', 'noise_std_diff', 'noise_std_rolling']
         # arrange metrics in a grid of subplots
         n = len(metrics)
@@ -95,7 +109,9 @@ class CausalityAnalyzer:
         axes = axes.flatten()
         for idx, metric in enumerate(metrics):
             pivot = stats.pivot(index='variable', columns='label', values=metric)
-            pivot.plot(kind='bar', ax=axes[idx])
+            # Use the palette to set colors for each label
+            label_colors = [palette[label] for label in pivot.columns]
+            pivot.plot(kind='bar', ax=axes[idx], color=label_colors)
             axes[idx].set_title(f"{metric.replace('_', ' ').title()} by Dataset")
             axes[idx].set_ylabel(metric.replace('_', ' ').title())
         # hide unused subplots if any
