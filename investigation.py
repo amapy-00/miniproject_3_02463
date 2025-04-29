@@ -141,7 +141,7 @@ class CausalityAnalyzer:
 if __name__ == '__main__':
     # Example usage: adjust paths as needed
     analyzer = CausalityAnalyzer()
-    analyzer.add_data('without_intervention', 'data/data_1394.csv')
+    analyzer.add_data('without_intervention', 'data/data_1938.csv')
     # Plot pairwise relationships
     analyzer.plot_pairplot()
     # Plot summary statistics
