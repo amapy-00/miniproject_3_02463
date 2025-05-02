@@ -232,10 +232,11 @@ if __name__ == '__main__':
     # Example usage: adjust paths as needed
     analyzer = CausalityAnalyzer()
     analyzer.add_data('without_intervention', 'data/data_1938.csv')
+    analyzer.add_data('intervention_D_-2', 'data/data_1998.csv')
     # Plot pairwise relationships
     analyzer.plot_pairplot()
     # Plot summary statistics
     analyzer.plot_statistics()
     
-    analyzer.plot_conditional_correlation_heatmaps()
+    # analyzer.plot_conditional_correlation_heatmaps()
     plt.show()
